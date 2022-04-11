@@ -25,7 +25,7 @@ def adjust_orientation(image):
         pass
     return image
 
-def web_service(image, values):
+def api(image, values):
     result = {
         "ok": True,
         "diag": "Thalassemia"
@@ -90,25 +90,27 @@ with st.form("fill_values", clear_on_submit=True):
     submitted = st.form_submit_button('Submit')
 
 if submitted:
-    if hb != "" and hct != "" and mcv != "" and mch != "":
-        if hb.isnumeric() and hct.isnumeric() and mcv.isnumeric() and mch.isnumeric():
-            st.success("Filled completely!")
-            values = {
-                "Hb": int(hb),
-                "Hct": int(hct),
-                "MCV": int(mcv),
-                "MCH": int(mch)
-            }
-            result = web_service(image, values)
+    try: 
+        if hb != "" and hct != "" and mcv != "" and mch != "":
+            if hb.isinstance() and hct.isinstance() and mcv.isinstance() and mch.isinstance():
+                st.success("Filled completely!")
+                values = {
+                    "Hb": int(hb),
+                    "Hct": int(hct),
+                    "MCV": int(mcv),
+                    "MCH": int(mch)
+                }
+                result = api(image, values)
+            else: 
+                st.error("Please enter numbers")
+                result = None
         else: 
-            st.error("Please enter the number!")
+            st.error("Filled incompletely")
             result = None
-    else: 
-        st.error("Filled incompletely!")
-        result = None
 
-    if values is not None:
-        st.write(values)
+        if values is not None:
+            st.write(values)
+    except: st.error("Please upload the image")
 
 # update sidebar
 if 'result' in locals():
